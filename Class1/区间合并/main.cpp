@@ -1,11 +1,57 @@
 /*
  * @Author: your name
  * @Date: 2020-09-21 21:00:31
- * @LastEditTime: 2020-09-21 21:28:25
+ * @LastEditTime: 2021-01-05 00:04:18
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /区间合并/main.cpp
  */
+
+#include <iostream>
+#include <vector>
+#include <queue>
+#include <algorithm>
+#include <utility>
+using namespace std;
+
+struct cmp{
+    bool operator()(pair<int,int>& a, pair<int,int>& b){
+        return a.first > b.first;
+    }
+};
+
+int main(){
+    int n;
+    cin >> n;
+    priority_queue<pair<int,int>, vector<pair<int,int>>, cmp> q;
+    for(int i = 0; i < n; ++i){
+        int n1, n2;
+        cin >> n1 >> n2;
+        q.push(make_pair(n1,n2));
+    }
+    bool exist = true;
+    while(q.size() != 1){
+        pair<int,int> a = q.top();
+        q.pop();
+        pair<int,int> b = q.top();
+        q.pop();
+        if(b.first <= a.second){
+            q.push(make_pair(a.first, max(a.second, b.second)));
+        }else{
+            exist = false;
+            break;
+        }
+    }
+    if(exist){
+        cout << q.top().first << " " << q.top().second << endl;
+    }else{
+        cout << "no" << endl;
+    }
+    return 0;
+}
+
+
+/*
 #include <stdlib.h>
 #include <stdio.h>
 #include <deque>
@@ -52,3 +98,4 @@ int main(){
     }
     return 0;
 }
+*/
