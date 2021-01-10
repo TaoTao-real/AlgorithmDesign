@@ -1,11 +1,45 @@
 /*
  * @Author: your name
  * @Date: 2020-10-16 22:33:42
- * @LastEditTime: 2020-10-16 23:18:44
+ * @LastEditTime: 2021-01-09 15:04:36
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /projects/算法分析与复杂性理论/第三次作业/Huffman编码树/main.cpp
  */
+
+#include <iostream>
+#include <vector>
+#include <queue>
+using namespace std;
+
+int main(){
+    int t;
+    cin >> t;
+    while(t--){
+        priority_queue<int, vector<int>, greater<int>> q;
+        int n;
+        cin >> n;
+        for(int i = 0; i < n; ++i){
+            int x;
+            cin >> x;
+            q.push(x);
+        }
+        int res = 0;
+        while(q.size() != 1){
+            int a= q.top();
+            q.pop();
+            int b = q.top();
+            q.pop();
+            q.push(a+b);
+            res+=a;
+            res+=b;
+        }
+        cout << res << endl;
+    }
+    return 0;
+}
+
+/*
 #include <iostream>
 #include <stdlib.h>
 #include <queue>
@@ -77,3 +111,4 @@ int main(){
     }
     return 0;
 }
+*/

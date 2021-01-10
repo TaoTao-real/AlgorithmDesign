@@ -1,11 +1,60 @@
 /*
  * @Author: your name
  * @Date: 2020-09-22 15:22:59
- * @LastEditTime: 2020-09-22 15:56:38
+ * @LastEditTime: 2021-01-05 15:55:40
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /重建二叉树/main.cpp
  */
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+class node{
+public:
+    char v;
+    node* l;
+    node* r;
+    node(char _v, node* _l, node* _r): v(_v), l(_l), r(_r){}
+};
+
+void bfs(node* root){
+    if(root == NULL) return;
+    bfs(root->l);
+    bfs(root->r);
+    cout << root->v;
+    return;
+}
+
+node* buildTree(string mlr, int s1, int e1, string lmr, int s2, int e2){
+    if(s1 == e1){
+        return new node(mlr[s1], NULL, NULL);
+    }else if(s1 > e1 || s2 > e2){
+        return NULL;
+    }else{
+        char root = mlr[s1];
+        int mid = find(lmr.begin(), lmr.end(), root) - lmr.begin();
+        int leftTreeSize = mid - s2;
+        int righTreeSize = e2 - mid;
+        return new node(root, buildTree(mlr, s1+1, s1 + leftTreeSize, lmr, s2, mid-1), buildTree(mlr, s1+leftTreeSize+1, e1, lmr, mid+1, e2));
+    }
+}
+
+int main(){
+    string mlr, lmr;
+    while(cin >> mlr >> lmr){
+        node* root = buildTree(mlr, 0, mlr.size()-1, lmr, 0, lmr.size()-1);
+        bfs(root);
+        cout << endl;
+    }
+    return 0;
+}
+
+
+/*
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
@@ -57,3 +106,4 @@ int main(){
     }
     return 0;
 }
+*/

@@ -1,11 +1,92 @@
 /*
  * @Author: your name
  * @Date: 2020-10-13 13:26:26
- * @LastEditTime: 2020-10-16 21:49:52
+ * @LastEditTime: 2021-01-09 14:47:45
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /算法分析与复杂性理论/第三次作业/Percolation/main.cpp
  */
+
+#include <iostream>
+#include <utility>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+pair<int,int> findfather(vector<vector<pair<int,int>>>& father, pair<int,int> a){
+    if(father[a.first][a.second] == a){
+        return a;
+    }else{
+        father[a.first][a.second] = findfather(father, father[a.first][a.second]);
+        return father[a.first][a.second];
+    }
+}
+
+void unionset(vector<vector<pair<int,int>>>& father, pair<int,int> a, pair<int,int> b){
+    pair<int,int> fa = findfather(father, a);
+    pair<int,int> fb = findfather(father, b);
+    if(fa != fb){
+        father[fb.first][fb.second] = fa;
+    }
+}
+
+int main(){
+    int t;
+    cin >> t;
+    while(t--){
+        int isPercolation = false;
+        int stepcount = 0;
+        int n, m;
+        cin >> n >> m;
+        vector<vector<pair<int,int>>> father(n+2, vector<pair<int,int>> (n+2));
+        vector<vector<int>> isopen(n+2, vector<int> (n+2, 0));
+        for(int i = 0; i < n+2; ++i){
+            for(int j = 0; j < n+2; ++j){
+                if(i == 0){
+                    father[i][j] = make_pair(0, 0);
+                    isopen[i][j] = 1;
+                }else if(i == n+1){
+                    father[i][j] = make_pair(n+1, 0);
+                    isopen[i][j] = 1;
+                }else{
+                    father[i][j] = make_pair(i, j);
+                }
+            }
+        }
+        while(m--){
+            int y, x;
+            cin >> y >> x;
+            if(isPercolation == false){
+                stepcount++;
+                isopen[y][x] = 1;
+                if(isopen[y-1][x]){
+                    unionset(father, make_pair(y, x), make_pair(y-1, x));
+                }
+                if(isopen[y+1][x]){
+                    unionset(father, make_pair(y, x), make_pair(y+1, x));
+                }
+                if(isopen[y][x-1]){
+                    unionset(father, make_pair(y, x), make_pair(y, x-1));
+                }
+                if(isopen[y][x+1]){
+                    unionset(father, make_pair(y, x), make_pair(y, x+1));
+                }
+                if(findfather(father, make_pair(0,0)) == findfather(father, make_pair(n+1, 0))){
+                    isPercolation = true;
+                }
+            }
+        }
+        if(isPercolation){
+            cout << stepcount<< endl;
+        }else {
+            cout << -1 << endl;
+        }
+        return 0;
+    }
+}
+
+/*
 //⚠️横纵坐标都从1开始。。。卡了好久
 #include <iostream>
 #include <stdlib.h>
@@ -76,7 +157,7 @@ int main(){
     return 0;
 }
 
-
+*/
 /* 会超时
 #include <stdlib.h>
 #include <stdio.h>
