@@ -1,11 +1,83 @@
 /*
  * @Author: your name
  * @Date: 2020-10-17 21:34:50
- * @LastEditTime: 2020-10-18 15:51:21
+ * @LastEditTime: 2021-01-12 23:29:50
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /projects/算法分析与复杂性理论/第三次作业/Agri-Net/main.cpp
  */
+
+#include <iostream>
+#include <algorithm>
+#include <stdlib.h>
+#include <vector>
+#include <queue>
+using namespace std;
+
+class edge{
+public:
+    int w;
+    int u, v;
+    edge(int _w, int _u, int _v): w(_w), u(_u), v(_v){}
+};
+
+struct cmp{
+    bool operator()(edge& a, edge& b){
+        return a.w > b.w;
+    }
+};
+
+int findfather(vector<int>& father, int a){
+    if(father[a] == a){
+        return a;
+    }else{
+        father[a] = findfather(father, father[a]);
+        return father[a];
+    }
+}
+
+void unionset(vector<int>& father, int a, int b){
+    int fa = findfather(father, a);
+    int fb = findfather(father, b);
+    if(fa != fb){
+        father[fb] = fa;
+    }
+}
+
+int main(){
+    int n;
+    while(cin >> n){
+        vector<int> father(n);
+        for(int i = 0; i < n; ++i) father[i] = i;
+        //vector<vector<int>> distance(n, vector<int>(n, 0));
+        priority_queue<edge, vector<edge>, cmp> q;
+        for(int i = 0; i < n; ++i){
+            for(int j = 0; j < n; ++j){
+                int distance;
+                cin >> distance;
+                if(j > i){
+                    q.push(edge(distance, i, j));
+                }
+            }
+        }
+        int edgecount = 0;
+        int res = 0;
+        while(edgecount != n-1){
+            edge e = q.top();
+            if(findfather(father, e.u) != findfather(father, e.v)){
+                unionset(father, e.u, e.v);
+                res+=e.w;
+                edgecount++;
+            }
+            q.pop();
+        }
+        cout << res << endl;
+    }
+    return 0;
+}
+
+
+/*
 // Kruskal算法
 #include <iostream>
 #include <stdlib.h>
@@ -74,7 +146,7 @@ int main(){
     }
     return 0;
 }
-
+*/
 /*
 //PRIM 算法
 #include <iostream>
