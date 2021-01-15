@@ -1,12 +1,83 @@
 /*
  * @Author: your name
  * @Date: 2020-11-07 19:35:11
- * @LastEditTime: 2021-01-13 17:36:11
+ * @LastEditTime: 2021-01-14 21:29:25
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: /projects/AlgorithmDesign/Class4/Raid/main.cpp
  */
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <utility>
+#include <limits.h>
+#include <iomanip>
+using namespace std;
 
+class point{
+public:
+    int isRadar;
+    double x;
+    double y;
+    point(int _isRadar, double _x, double _y): isRadar(_isRadar), x(_x), y(_y){}
+};
+
+bool cmpx(point& a, point& b){
+    return a.x < b.x;
+}
+bool cmpy(point& a, point& b){
+    return a.y < b.y;
+}
+double minDis(vector<point>& radarAndAgent, int start, int end){
+    if(start == end){
+        return __DBL_MAX__;
+    }
+    int mid = (start+end)/2;
+    double minDisLeft = minDis(radarAndAgent, start, mid);
+    double minDisRight = minDis(radarAndAgent, mid+1, end);
+    double minDisSide = min(minDisLeft, minDisRight);
+    vector<point> pointsInMidArea;
+    for(int i = start; i <= end; ++i){
+        if(abs(radarAndAgent[i].x - radarAndAgent[mid].x)<=minDisSide){
+            pointsInMidArea.push_back(radarAndAgent[i]);
+        }
+    }
+    sort(pointsInMidArea.begin(), pointsInMidArea.end(), cmpy);
+    double minDistance = minDisSide;
+    for(int i = 0; i < pointsInMidArea.size(); ++i){
+        for(int j = i+1; j < pointsInMidArea.size() && j <= i+12; ++j){
+            if(pointsInMidArea[i].isRadar != pointsInMidArea[j].isRadar){
+                double distance = pow((pointsInMidArea[i].x-pointsInMidArea[j].x)*(pointsInMidArea[i].x-pointsInMidArea[j].x) + (pointsInMidArea[i].y-pointsInMidArea[j].y)*(pointsInMidArea[i].y-pointsInMidArea[j].y),0.5);
+                minDistance = min(minDistance, distance);
+            }
+        }
+    }
+    return minDistance;
+}
+
+int main(){
+    cout << fixed << setprecision(3);
+    int t;
+    cin >> t;
+    while(t--){
+        int n;
+        cin >> n;
+        vector<point> radarAndAgent;
+        for(int i = 0; i < n; ++i){
+            double x, y;
+            cin >> x >> y;
+            radarAndAgent.push_back(point(1, x, y));
+        }
+        for(int i = 0; i < n; ++i){
+            double x, y;
+            cin >> x >> y;
+            radarAndAgent.push_back(point(0, x, y));
+        }
+        sort(radarAndAgent.begin(), radarAndAgent.end(), cmpx);
+        cout << minDis(radarAndAgent, 0, n*2-1) << endl;
+    }
+    return 0;
+}
 
 /*
 #include <iostream>
